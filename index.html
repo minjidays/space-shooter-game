@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html>
+<!---      
+                           MINJIDAYS 
+                       SPACE SHOOTER GAME
+                  https://github.com/minjidays
+
+ 
+--->
+
+    <head>
+
+        <!---FONTS--->
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+                word-wrap: break-word;
+                color: black;
+                background-color: black;
+                font-family: "Press Start 2P", cursive;
+            }
+
+            /**gets rid of iframe**/
+            body > iframe:first-child {
+                display: none !important;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            #container {
+                position: absolute;
+                width: 80%;
+                height: 80%;
+                top: 10%;
+                left: 10%;
+                background-color: black;
+                background-image: url(https://64.media.tumblr.com/0a23de22bcc911303cafb6f4f338c792/b9cf111da0d625a4-de/s500x750/2b88a09bdfbd83798b9966d5f7026b91086c86b0.gif);
+                background-repeat: repeat;
+                border-radius: 65px;
+            }
+
+            /**line effect across screen**/
+            #container:after {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, transparent), color-stop(50%, rgba(0, 0, 0, 0.25)));
+                background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.25) 0);
+                background-size: 100% 4px;
+                opacity: 0.5;
+                z-index: 100;
+                pointer-events: none;
+            }
+
+            #title {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                z-index: 90;
+                transform: translate(-50%, calc(-50% - 30px));
+                color: white;
+                width: 700px;
+                text-align: center;
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari */
+                -khtml-user-select: none; /* Konqueror HTML */
+                -moz-user-select: none; /* Old versions of Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none;
+            }
+
+            #title h1 {
+                color: white;
+                font-size: 58px;
+                animation: glow 3s ease-in-out infinite alternate;
+                -webkit-animation: glow 3s ease-in-out infinite alternate;
+                -moz-animation: glow 3s ease-in-out infinite alternate;
+            }
+
+            @-webkit-keyframes glow {
+                from {
+                    text-shadow: 0 0 5px #ff006c, 0 0 10px #ff006c, 0 0 15px #ff006c, 0 0 20px #ff417d, 0 0 35px #ff417d, 0 0 40px #ff417d, 0 0 50px #ff417d, 0 0 75px #ff417d;
+                }
+                to {
+                    text-shadow: 0 0 10px #ff006c, 0 0 20px #ff006c, 0 0 30px #ff006c, 0 0 40px #ff417d, 0 0 70px #ff417d, 0 0 80px #ff417d, 0 0 100px #ff417d, 0 0 150px #ff417d;
+                }
+            }
+
+            .subtitle1 {
+                position: absolute;
+                bottom: 90%;
+                color: #00ff38;
+                font-family: inherit;
+                font-size: 32px;
+                width: 700px;
+                height: auto;
+            }
+
+            .subtitle2 {
+                position: absolute;
+                top: 90%;
+                color: #ccc;
+                font-family: inherit;
+                font-size: 16px;
+                width: 700px;
+                height: auto;
+            }
+
+            .navbar {
+                position: absolute;
+                top: 0;
+                display: flex;
+                justify-content: space-evenly;
+                overflow: hidden;
+                width: 100%;
+                height: 75px;
+                z-index: 50;
+            }
+
+            /* Style the buttons that are used to open the tab content */
+            .navbar button {
+                background-color: inherit;
+                border: none;
+                outline: none;
+                cursor: pointer; /**CHANGE***/
+                padding: 14px 5px;
+                text-transform: uppercase;
+            }
+
+            .navbar button.active p {
+                text-decoration: underline 3px white;
+                text-shadow: 0 0 5px #ff006c, 0 0 10px #ff006c, 0 0 15px #ff006c, 0 0 20px #ff417d, 0 0 25px #ff417d;
+            }
+
+            .navbar button p,
+            .navbar button a {
+                font-family: "Press Start 2P", cursive;
+                display: inline-block;
+                font-size: 16px;
+                color: white;
+                transition: all 0.5s ease;
+                -webkit-transition: all 0.5s ease;
+                -moz-transition: all 0.5s ease;
+                -ms-transition: all 0.5s ease;
+                -o-transition: all 0.5s ease;
+            }
+
+            .navbar button p:hover,
+            .navbar button a:hover {
+                text-shadow: 0 0 5px #ff006c, 0 0 10px #ff006c, 0 0 15px #ff006c, 0 0 20px #ff417d, 0 0 25px #ff417d;
+            }
+
+            /* Style the tab content */
+            .tabcontent {
+                display: none;
+                position: absolute;
+                top: 75px;
+                height: calc(100% - 105px); /* note: takes up space behind navbar */
+                width: 100%;
+                animation: fadeIn 1s;
+                color: white;
+                font-size: 13px;
+                overflow: hidden;
+                overflow-y: scroll;
+                padding-bottom: 30px;
+                -ms-overflow-style: none; /* Internet Explorer 10+ */
+                scrollbar-width: none; /* Firefox */
+            }
+
+            .tabcontent::-webkit-scrollbar {
+                display: none; /* Safari and Chrome */
+            }
+
+            .tabcontent table {
+                margin: 0 auto;
+                width: 95%;
+                border-collapse: separate;
+                border-spacing: 4px;
+                border-radius: 0;
+                border: 2px solid black;
+                background: none;
+            }
+
+            .tabcontent th {
+                border: 0;
+                margin-bottom: 2px;
+                text-align: center;
+                vertical-align: middle;
+                padding: 0.5em;
+                background: black;
+                padding: 12px;
+            }
+
+            .tabcontent a {
+                color: #00ff38;
+                text-decoration: underline;
+            }
+
+            .tabcontent a:hover {
+                color: white;
+            }
+
+            .col-number,
+            .follow,
+            .message {
+                width: 0;
+            }
+
+            .avatar {
+                width: 0;
+                padding-top: 2px;
+                padding-bottom: 2px;
+            }
+
+            .avatar img {
+                border-radius: 50%;
+                height: 37px;
+                width: 37px;
+            }
+
+            .name {
+                word-break: break-all;
+                min-width: 55px;
+                max-width: 250px;
+            }
+
+            .catchphrase {
+                min-width: 143px;
+                word-break: break-word;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+
+            .emoji {
+                position: relative;
+                font-family: inherit;
+                font-size: 16px;
+                display: inline-block;
+                line-height: 16px;
+                top: -3px;
+                margin-right: 7px;
+            }
+
+            .emoji img {
+                position: relative;
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+                margin-right: 4px;
+                top: 4px;
+            }
+
+            .number {
+                font-family: "Press Start 2P", cursive;
+                font-size: 16px;
+                color: #00ff38;
+                margin-left: 8px;
+            }
+
+            #play {
+                text-transform: uppercase;
+                background-color: #ffdd57;
+                border-radius: 290486px;
+                color: rgba(0, 0, 0, 0.7);
+                position: absolute;
+                top: calc(90% + 75px);
+                font-family: inherit;
+                font-size: 16px;
+                padding: 12px;
+                width: max-content;
+                height: auto;
+                display: block;
+                left: 50%;
+                -webkit-transform: translateX(-50%);
+                transform: translateX(-50%);
+                padding-left: 18px;
+                cursor: pointer;
+            }
+
+            #back {
+                margin-left: 15px;
+            }
+
+            canvas {
+                display: block;
+                height: 100%;
+                width: 100%;
+                border-radius: 65px;
+                animation: fadeIn 1s;
+            }
+
+            .dialogue__content h1 {
+                font-size: 3rem;
+                margin-bottom: 0.5em;
+                line-height: 1.2em;
+                color: white;
+                animation: glow 3s ease-in-out infinite alternate;
+                -webkit-animation: glow 3s ease-in-out infinite alternate;
+                -moz-animation: glow 3s ease-in-out infinite alternate;
+            }
+
+            .dialogue__content ul {
+                margin-bottom: 2rem;
+            }
+
+            .dialogue__content li {
+                color: #00ff38;
+                font-size: 0.8rem;
+                margin-bottom: 1em;
+                text-transform: uppercase;
+                list-style-type: none;
+            }
+
+            .dialogue__content button {
+                border-radius: 5px;
+                appearance: none;
+                background-color: white;
+                border: 1px solid white;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: 1rem;
+                outline: none;
+                padding: 0.7em 0.85em 0.6em 1em;
+                text-transform: uppercase;
+                transition: all 0.2s linear;
+            }
+
+            .dialogue__content button:hover,
+            .dialogue__content button:active {
+                background-color: transparent;
+                border: 1px solid #00ff38;
+                color: #00ff38;
+            }
+
+            .dialogue {
+                z-index: 20;
+                align-items: center;
+                background-color: transparent;
+                bottom: 0;
+                display: flex;
+                justify-content: center;
+                left: 0;
+                opacity: 1;
+                position: fixed;
+                right: 0;
+                text-align: center;
+                top: 0;
+                transform: translateX(0);
+                animation: fadeIn 1s;
+            }
+
+            .dialogue--hidden {
+                $duration: 0.3s;
+                opacity: 0;
+                transform: translateX(-100vw);
+                transition: opacity $duration linear 0s, transform 0s linear $duration;
+            }
+
+            .dialogue__content {
+                max-width: 31.25rem; // 500px / 16px
+                padding: 18px;
+            }
+
+            .key {
+                border: 1px solid white;
+                border-radius: 5px;
+                display: inline-block;
+                padding: 0.8em;
+                border-color: white;
+                color: white;
+            }
+
+            .key--arrow {
+                font-size: 1.8rem;
+                padding: 0.35em 0.1em 0.6em;
+                position: relative;
+                line-height: 0.3;
+                top: 0.05em;
+            }
+
+            .hud {
+                box-sizing: border-box;
+                display: flex;
+                justify-content: flex-start;
+                margin-top: 0;
+                margin-left: 15px;
+                list-style-type: none;
+                color: #00ff38;
+                opacity: 1;
+                padding: 1rem;
+                position: fixed;
+                transition: opacity 0.07s linear 0.5s;
+                width: 100%;
+            }
+
+            .hud--hidden {
+                opacity: 0;
+            }
+
+            .hud__score {
+                margin: 0;
+            }
+        </style>
+    </head>
+
+
+    <body>
+        <div id="container">
+            <!-- Navbar links -->
+            <div class="navbar">
+                <button class="tablinks" onclick="openCity(event, 'Home')" id="defaultOpen"><p>home</p></button>
+
+               <!-- CUSTUM LINK 
+                <button class="tablinks">
+                    <span class="emoji">⭐</span>
+                  
+                    <a href="/">link 1</a>
+                </button>            
+                 --->
+
+                <button class="tablinks"><span class="emoji"><img src="https://64.media.tumblr.com/778ccef4324be85dc915f9632616816f/5a54d42126692741-71/s250x400/b82d0b8604439adbfc24b6ad146f030048c984a3.gif" /></span><a href="https://github.com/minjidays">credits</a><span class="number">5</span></button><!---DO NOT REMOVE THE CREDIT.--->
+                <button class="tablinks" id="quit"><a href="/" title="Return to blog">quit</a></button>
+            </div>
+
+            <!-- Navbar content -->
+            <div id="Home" class="tabcontent">
+                <div id="title">
+                    <div class="subtitle1">SPACE SHOOTER GAME</div>
+                    <h1>MINJI DAYS</h1>
+                    <div class="subtitle2">DON'T PANIC</div>
+                    <button id="play">Play now!</button>
+                </div>
+            </div>
+
+
+            </div>
+        </div>
+
+
+<!---JAVASCRIPT STARTS HERE--->
+        <script>
+            function openCity(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+            
+            var homePage;
+
+            function clearHome(store) {
+                var parent = document.getElementById("Home");
+                if (store) {
+                    homePage = parent.innerHTML;
+                };
+                while (parent.firstChild) parent.removeChild(parent.firstChild);
+                return parent;
+            }
+
+            function goBackHome() {
+                document.getElementById("container").removeChild(stage);
+                const parent = clearHome(false);
+                parent.innerHTML = homePage;
+                document.getElementById("play").addEventListener("click", playNow);
+            }
+
+            // game code start
+
+            const DEV_MODE = false;
+
+            const stage = document.createElement("canvas");
+            var ctx;
+            var dialogue;
+            var hud;
+            var scoreNode;
+
+            let ship,
+                lasers = [],
+                enemies = [],
+                playing = false,
+                gameStarted = false,
+                speedMultiplier,
+                enemySeedFrameInterval,
+                score = 0,
+                tick = 0,
+                laserTick = 0;
+
+            function randomBetween(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function calcScore(x) {
+                return Math.floor((1 / x) * 500);
+            }
+
+            function Ship(options) {
+                this.radius = 15;
+                this.x = options.x || stage.width * 0.5 - this.radius - 0.5;
+                this.y = options.y || stage.height - this.radius - 30;
+                this.width = this.radius * 2;
+                this.height = this.width;
+                this.color = options.color || "red";
+                this.left = false;
+                this.right = false;
+                this.speed = 10;
+                this.active = true;
+
+                document.addEventListener("keydown", this.onKeyDown.bind(this));
+                document.addEventListener("keyup", this.onKeyUp.bind(this));
+            }
+
+            Ship.prototype.update = function (x) {
+                this.x = x;
+                this.y = stage.height - this.radius - 30;
+            };
+
+            Ship.prototype.draw = function () {
+                ctx.save();
+
+                if (DEV_MODE) {
+                    ctx.fillStyle = "skyblue";
+                    ctx.fillRect(this.x, this.y, this.width, this.width);
+                }
+
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x + this.radius - 5, this.y, 10, this.radius);
+                ctx.fillRect(this.x, this.y + this.radius, this.width, 10);
+                ctx.fillRect(this.x, this.y + this.radius + 10, 10, 5);
+                ctx.fillRect(this.x + this.width - 10, this.y + this.radius + 10, 10, 5);
+
+                ctx.restore();
+            };
+
+            Ship.prototype.onKeyDown = function (e) {
+                if (ship.active) {
+                    if (e.keyCode === 39) this.right = true;
+                    else if (e.keyCode === 37) this.left = true;
+
+                    if (e.keyCode == 32 && !this.shooting) {
+                        this.shooting = true;
+                        laserTick = 0;
+                    }
+                }
+            };
+
+            Ship.prototype.onKeyUp = function (e) {
+                if (e.key === "ArrowRight") this.right = false;
+                else if (e.key === "ArrowLeft") this.left = false;
+                else if (e.keyCode == 32) this.shooting = false;
+            };
+
+            function Laser(options) {
+                this.x = options.x - 0.5;
+                this.y = options.y || stage.height - 50;
+                this.width = 6;
+                this.height = 20;
+                this.speed = 15;
+                this.color = options.color || "white";
+                this.active = true;
+            }
+
+            Laser.prototype.update = function (y) {
+                this.y = y;
+            };
+
+            Laser.prototype.draw = function () {
+                ctx.save();
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.rect(this.x, this.y, this.width, this.height);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            };
+
+            function Enemy(options) {
+                this.radius = randomBetween(10, 40);
+                this.width = this.radius * 2;
+                this.height = this.width;
+                this.x = randomBetween(0, stage.width - this.width);
+                this.y = -this.radius * 2;
+                this.color = options != undefined && options.color ? options.color : "#896ce5";
+                this.speed = 2;
+                this.active = true;
+            }
+
+            Enemy.prototype.update = function (x, y) {
+                this.x = x;
+                this.y = y;
+            };
+
+            Enemy.prototype.draw = function () {
+                if (DEV_MODE) {
+                    ctx.fillStyle = "skyblue";
+                    ctx.fillRect(this.x, this.y, this.width, this.width);
+                }
+
+                ctx.save();
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            };
+
+            function hitTest(item1, item2) {
+                let collision = true;
+                if (item1.x > item2.x + item2.width || item1.y > item2.y + item2.height || item2.x > item1.x + item1.width || item2.y > item1.y + item1.height) {
+                    collision = false;
+                }
+                return collision;
+            }
+
+            function handleLaserCollision() {
+                for (let enemy of enemies) {
+                    for (let laser of lasers) {
+                        let collision = hitTest(laser, enemy);
+                        if (collision && laser.active) {
+                            console.log("you destroyed an enemy");
+                            enemy.active = false;
+                            laser.active = false;
+
+                            // increase enemy speed and frequency of enemy spawns
+                            speedMultiplier += 0.025;
+                            if (enemySeedFrameInterval > 20) {
+                                enemySeedFrameInterval -= 2;
+                            }
+
+                            // increase score
+                            score += calcScore(enemy.radius);
+                            scoreNode.textContent = score;
+                        }
+                    }
+                }
+            }
+
+            function handleShipCollision() {
+                // check for collisions between ship and enemies
+                if (enemies.length) {
+                    for (let enemy of enemies) {
+                        let collision = hitTest(ship, enemy);
+                        if (collision) {
+                            console.log("your ship was destroyed");
+                            ship.active = false;
+                            setTimeout(() => {
+                                ship.active = true;
+                                speedMultiplier = 1;
+                                enemySeedFrameInterval = 100;
+                                score = 0;
+                                scoreNode.textContent = score;
+                            }, 2000);
+                        }
+                    }
+                }
+            }
+
+            function drawShip(xPosition) {
+                if (ship.active) {
+                    ship.update(xPosition);
+                    ship.draw();
+                }
+            }
+
+            function drawEnemies() {
+                if (enemies.length) {
+                    for (let enemy of enemies) {
+                        // draw an enemy if it's active
+                        if (enemy.active) {
+                            enemy.update(enemy.x, (enemy.y += enemy.speed * speedMultiplier));
+                            enemy.draw();
+                        }
+                    }
+                }
+            }
+
+            function enemyCleanup() {
+                if (enemies.length) {
+                    enemies = enemies.filter((enemy) => {
+                        let visible = enemy.y < stage.height + enemy.width;
+                        let active = enemy.active === true;
+                        return visible && active;
+                    });
+                }
+            }
+
+            function drawLasers() {
+                if (lasers.length) {
+                    for (let laser of lasers) {
+                        if (laser.active) {
+                            laser.update((laser.y -= laser.speed));
+                            laser.draw();
+                        }
+                    }
+                }
+            }
+
+            function laserCleanup() {
+                lasers = lasers.filter((laser) => {
+                    let visible = laser.y > -laser.height;
+                    let active = laser.active === true;
+                    return visible && active;
+                });
+            }
+
+            function render(delta) {
+                if (playing) {
+                    let xPos = ship.x;
+
+                    // seed new enemies
+                    if (tick % enemySeedFrameInterval === 0 && ship.active) {
+                        const enemy = new Enemy();
+                        enemies.push(enemy);
+                        console.log({ enemySeedFrameInterval, speedMultiplier });
+                    }
+
+                    // background
+                    ctx.save();
+                    ctx.fillStyle = "#272744";
+                    ctx.fillRect(0, 0, stage.width, stage.height);
+                    ctx.restore();
+
+                    // ship movement
+                    if (ship.left) xPos = ship.x -= ship.speed;
+                    else if (ship.right) xPos = ship.x += ship.speed;
+
+                    // stage boundaries
+                    if (gameStarted) {
+                        if (xPos < 0) xPos = 0;
+                        else if (xPos > stage.width - ship.width) xPos = stage.width - ship.width;
+                    }
+
+                    // create lasers, if shooting
+                    if (ship.active && ship.shooting) {
+                        if (laserTick === 0 || laserTick % 10 === 0) {
+                            let laser = new Laser({
+                                color: "skyblue",
+                                x: ship.x + ship.radius - 3,
+                            });
+                            lasers.push(laser);
+                        }
+                    }
+
+                    drawShip(xPos);
+
+                    handleShipCollision();
+                    handleLaserCollision();
+
+                    drawLasers();
+                    drawEnemies();
+
+                    enemyCleanup();
+                    laserCleanup();
+
+                    if (ship.shooting) laserTick++;
+                    tick++;
+                }
+
+                requestAnimationFrame(render);
+            }
+
+            function quitGame() {
+                console.log("stopping game");
+                const quit = document.getElementById("quit");
+                quit.title = "";
+                quit.style.textShadow = "none";
+                quit.innerHTML = '<a href="/" title="Return to blog">quit</a>';
+                window.removeEventListener("resize", onResize);
+                ship.x = -100;
+                ship.y = -100;
+                gameStarted = false;
+                playing = false;
+                goBackHome();
+            }
+
+            function startGame(e) {
+                console.log("starting game");
+                // redo quit button
+                const quit = document.getElementById("quit");
+                quit.addEventListener("click", quitGame);
+                quit.innerHTML = "<p>quit</p>";
+                quit.title = "Quit game";
+                quit.style.textShadow = "0 0 5px #ff006c, 0 0 10px #ff006c, 0 0 15px #ff006c, 0 0 20px #ff417d, 0 0 25px #ff417d";
+
+                dialogue.classList.add("dialogue--hidden");
+                hud.classList.remove("hud--hidden");
+                e.currentTarget.blur();
+
+                // reset the demo/intro to the actual game settings:
+                speedMultiplier = 1;
+                enemySeedFrameInterval = 100;
+                ship.x = stage.width * 0.5 - ship.radius - 0.5;
+                ship.y = stage.height - ship.radius - 30;
+                enemies = [];
+                gameStarted = true;
+            }
+
+            function onResize() {
+                stage.width = window.innerWidth;
+                stage.height = window.innerHeight;
+            }
+
+            // game code end
+
+            function playNow() {
+                // clear out home panel
+                const parent = clearHome(true);
+                // add start menu instructions
+                parent.innerHTML =
+                    '<div class="dialogue"><div class="dialogue__content"><h1>Space Shooter</h1><ul><li>Use the <span class="key key--arrow">&larr;</span> and <span class="key key--arrow">&rarr;</span> keys to move.</li><li>Use <span class="key">spacebar</span> to fire lasers.</li></ul><button id="start">Start</button><button id="back">Back</button></div></div><ul class="hud hud--hidden"><li class="hud__score">Score: <span>0</span></li></ul>';
+
+                document.getElementById("start").addEventListener("click", startGame);
+                document.getElementById("back").addEventListener("click", goBackHome);
+
+                (ctx = stage.getContext("2d")), (dialogue = document.querySelector(".dialogue"));
+                (hud = document.querySelector(".hud")), (scoreNode = hud.querySelector(".hud__score span"));
+
+                window.addEventListener("resize", onResize);
+
+                document.getElementById("container").appendChild(stage);
+                onResize();
+
+                //start the ship off-screen:
+                ship = new Ship({ color: "#FF3188", x: -100, y: -100 });
+                // up some ridiculous enemy speeds for the intro:
+                (speedMultiplier = 6), (enemySeedFrameInterval = 20);
+                playing = true;
+                render();
+            }
+
+            document.getElementById("defaultOpen").click();
+            document.getElementById("play").addEventListener("click", playNow);
+        </script>
+    </body>
+</html>
