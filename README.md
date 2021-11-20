@@ -1,7 +1,11 @@
 # space shooter game
 ### mini space shooter game in a html, css and js, is also rich presence with custom link.
 
-you can edit almost everything in the code, and also put an additional link with some of your info or a redirect link, or just start the game!
+### notes:
+
+&bull; to run just use the complete html file, `only.js` file is just for better viewing.
+
+&bull; you can edit almost everything in the code, and also put an additional link with some of your info or a redirect link, or just start the game!
 
 # preview
 
